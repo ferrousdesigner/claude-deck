@@ -67,6 +67,13 @@ git push -q origin main "$TAG"
 echo "▸ Publishing GitHub Release"
 ASSET="$(mktemp -d)/Claude-Deck-$NEW.dmg"
 cp "dist/Claude Deck.dmg" "$ASSET"
-gh release create "$TAG" "$ASSET" --title "Claude Deck $NEW" --notes "$NOTES" --latest
+if ! gh release create "$TAG" "$ASSET" --title "Claude Deck $NEW" --notes "$NOTES" --latest; then
+  # GitHub sometimes fails the upload after creating a draft; finish that draft instead of starting over.
+  echo "▸ Retrying the release upload"
+  sleep 3
+  gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --draft --title "Claude Deck $NEW" --notes "$NOTES"
+  gh release upload "$TAG" "$ASSET" --clobber
+  gh release edit "$TAG" --draft=false --latest
+fi
 
 echo "✓ Released $TAG"
