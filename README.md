@@ -6,6 +6,7 @@
 
 See what Claude is doing right now, browse and search every past session, track cost, find out how to spend fewer tokens, and manage MCP servers, hooks and permissions without editing JSON.
 
+[![Latest release](https://img.shields.io/github/v/release/ferrousdesigner/claude-deck?label=release&color=D97757)](https://github.com/ferrousdesigner/claude-deck/releases/latest)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-black?logo=apple)
 ![Swift](https://img.shields.io/badge/Swift-5.10%2B-F05138?logo=swift&logoColor=white)
 ![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-0A84FF)
@@ -70,7 +71,7 @@ It has no account, no server and no telemetry. Everything stays on your Mac.
 
 ### Download
 
-**[⬇ Download Claude Deck.dmg](https://github.com/ferrousdesigner/claude-deck/raw/main/download/Claude%20Deck.dmg)**: a universal build for Apple silicon and Intel Macs, about 5 MB.
+**[⬇ Download Claude Deck.dmg](https://github.com/ferrousdesigner/claude-deck/raw/main/download/Claude%20Deck.dmg)**: the latest version, a universal build for Apple silicon and Intel Macs, about 5 MB. Older versions and release notes are on the [Releases](https://github.com/ferrousdesigner/claude-deck/releases) page, and every change is listed in the [CHANGELOG](CHANGELOG.md).
 
 1. Open the `.dmg` and drag **Claude Deck** into **Applications**.
 2. The app is ad-hoc signed, not notarized, so the first time you open it macOS may say it can't verify the developer. Right-click the app, choose **Open**, then **Open** again. On macOS 15 and later, you may instead need to go to **System Settings → Privacy & Security** and click **Open Anyway**.
@@ -126,13 +127,16 @@ Costs are estimated at API list prices. On a Pro or Max plan you aren't billed p
 ## Project layout
 
 ```
-download/                # prebuilt Claude Deck.dmg
+VERSION                  # current version, e.g. 1.0.0
+CHANGELOG.md             # one entry per release
+download/                # prebuilt Claude Deck.dmg (latest release)
 Sources/ClaudeDeck/
 ├── App.swift            # app entry, tabs, menus, launch arguments
 ├── Core/                # parsing, pricing, cost advisor, settings, MCP, runner, search
 └── Views/               # one SwiftUI view per tab, plus the guide, menu bar and composer
 scripts/
 ├── build_app.sh         # release build → .app + .dmg (+ --install)
+├── release.sh           # bump version, build, commit, tag, push, GitHub Release
 └── make_icon.swift      # renders the app icon
 ```
 
@@ -141,6 +145,30 @@ There are no third-party dependencies. It uses only SwiftUI, AppKit, Charts and 
 ## Contributing
 
 Issues and pull requests are welcome. Before opening a PR, run `swift build` and `.build/debug/ClaudeDeck --selftest`, and check that the self-test ends with `ALL PASSED`.
+
+## Versioning and releases
+
+Claude Deck uses [semantic versioning](https://semver.org). The `VERSION` file is the single source of truth: it becomes the app's version in *About Claude Deck*, and each release is tagged `vX.Y.Z`.
+
+Every commit to `main` is made as a release:
+
+```bash
+scripts/release.sh patch "Fix the sessions sidebar being pushed off-screen"
+scripts/release.sh minor "Add the Improvements tab"
+scripts/release.sh major "Redesigned navigation"
+scripts/release.sh 1.4.0 "Set an exact version"
+```
+
+The script runs these steps in order:
+
+1. Bumps `VERSION`.
+2. Runs the self-test, and stops without committing if it fails.
+3. Rebuilds `download/Claude Deck.dmg`.
+4. Adds a `CHANGELOG.md` entry.
+5. Commits as `vX.Y.Z: <notes>`, tags it, and pushes.
+6. Publishes a [GitHub Release](https://github.com/ferrousdesigner/claude-deck/releases) with the `.dmg` attached.
+
+The build number is the commit count.
 
 ## License
 

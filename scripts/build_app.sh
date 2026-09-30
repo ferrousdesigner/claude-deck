@@ -5,11 +5,12 @@ cd "$(dirname "$0")/.."
 
 APP_NAME="Claude Deck"
 BUNDLE_ID="com.ferrousdesigner.claudedeck"
-VERSION="1.0.0"
+VERSION=$(tr -d '[:space:]' < VERSION)
+BUILD=${BUILD:-$(git rev-list --count HEAD 2>/dev/null || echo 1)}
 DIST="dist"
 APP="$DIST/$APP_NAME.app"
 
-echo "▸ Building release binary"
+echo "▸ Building release binary (v$VERSION, build $BUILD)"
 swift build -c release --arch arm64 --arch x86_64 2>/dev/null || swift build -c release
 BIN_DIR=$(swift build -c release --show-bin-path 2>/dev/null)
 [[ -f .build/apple/Products/Release/ClaudeDeck ]] && BIN_DIR=.build/apple/Products/Release
@@ -41,7 +42,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>$VERSION</string>
-  <key>CFBundleVersion</key><string>1</string>
+  <key>CFBundleVersion</key><string>$BUILD</string>
   <key>LSMinimumSystemVersion</key><string>14.0</string>
   <key>LSApplicationCategoryType</key><string>public.app-category.developer-tools</string>
   <key>NSHighResolutionCapable</key><true/>
