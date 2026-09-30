@@ -68,10 +68,17 @@ It has no account, no server and no telemetry. Everything stays on your Mac.
 
 ## Install
 
+### Download
+
+**[⬇ Download Claude Deck.dmg](https://github.com/ferrousdesigner/claude-deck/raw/main/download/Claude%20Deck.dmg)**: a universal build for Apple silicon and Intel Macs, about 5 MB.
+
+1. Open the `.dmg` and drag **Claude Deck** into **Applications**.
+2. The app is ad-hoc signed, not notarized, so the first time you open it macOS may say it can't verify the developer. Right-click the app, choose **Open**, then **Open** again. On macOS 15 and later, you may instead need to go to **System Settings → Privacy & Security** and click **Open Anyway**.
+
 ### Requirements
 - macOS 14 Sonoma or later
-- Xcode 15.3+ or the Swift 5.10+ command-line tools
 - [Claude Code](https://docs.claude.com/en/docs/claude-code) installed and signed in. Browsing history works without it; Ask Claude, summaries and digests need it.
+- To build from source: Xcode 15.3+ or the Swift 5.10+ command-line tools.
 
 ### Build from source
 
@@ -82,8 +89,6 @@ scripts/build_app.sh --install
 ```
 
 This builds a universal release binary, packages `Claude Deck.app` and a `.dmg` in `dist/`, and copies the app into `/Applications`. Leave off `--install` to only build.
-
-The app is ad-hoc signed, so the first time you open it macOS may say it can't verify the developer. Right-click the app, choose **Open**, then **Open** again.
 
 ### Run in development
 
@@ -121,6 +126,7 @@ Costs are estimated at API list prices. On a Pro or Max plan you aren't billed p
 ## Project layout
 
 ```
+download/                # prebuilt Claude Deck.dmg
 Sources/ClaudeDeck/
 ├── App.swift            # app entry, tabs, menus, launch arguments
 ├── Core/                # parsing, pricing, cost advisor, settings, MCP, runner, search
